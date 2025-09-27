@@ -1,6 +1,6 @@
 # Scripts Directory
 
-This directory contains automation scripts for docker-snap development and deployment.
+This directory contains automation scripts for Flask application development and deployment.
 
 ## Scripts Overview
 
@@ -18,7 +18,7 @@ This directory contains automation scripts for docker-snap development and deplo
    - Unit tests (`tests/test_simple.py`) 
 2. **Phase 2: Docker Container Tests**
    - Comprehensive Docker container test suite (`test-docker/test-container.sh`)
-   - 10 different validation checks
+   - Multiple validation checks
 
 **Output:**
 - ✅ Colored output showing test progress

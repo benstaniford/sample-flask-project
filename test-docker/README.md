@@ -1,6 +1,6 @@
 # Docker Container Testing
 
-This directory contains scripts to build and test the docker-snap container.
+This directory contains scripts to build and test the Flask application container.
 
 ## Test Script
 
@@ -14,11 +14,10 @@ Comprehensive test script that builds and validates the Docker container functio
 3. **Health Check** - Validates the `/health` endpoint
 4. **Login Page** - Ensures the web interface is accessible
 5. **Authentication** - Tests login functionality
-6. **Thumbnails API** - Validates the main API endpoint
-7. **JavaScript Modules** - Checks all 6 modular JS files are served correctly
-8. **Main Gallery Page** - Tests the full web interface
-9. **Container Logs** - Checks for errors in container logs
-10. **Performance** - Basic response time measurement
+6. **Sample API** - Validates the main API endpoint
+7. **Main Application Page** - Tests the full web interface
+8. **Container Logs** - Checks for errors in container logs
+9. **Performance** - Basic response time measurement
 
 ### Usage
 
@@ -51,7 +50,7 @@ The script provides colored output showing the progress and results of each test
 2. Starts the container using docker-compose
 3. Waits up to 60 seconds for the container to report healthy
 4. Runs a series of HTTP tests against the running container
-5. Validates that all JavaScript modules are properly served
+5. Validates the web interface and API endpoints
 6. Checks container logs for errors
 7. Measures basic API performance
 8. Cleans up all test artifacts when done
@@ -64,7 +63,7 @@ If tests fail:
 2. **Container won't start**: Check port 5000 is available
 3. **Health check fails**: Wait longer or check container logs with `docker compose logs`
 4. **Authentication fails**: Verify default credentials (user/password) haven't changed
-5. **API tests fail**: Check that sample-images directory exists and has content
+5. **API tests fail**: Check that the Flask application is running correctly
 
 ### Customization
 

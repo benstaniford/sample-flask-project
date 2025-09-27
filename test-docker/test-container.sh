@@ -1,12 +1,12 @@
 #!/bin/bash
 
 # Docker Container Test Script
-# Tests the docker-snap container build and functionality
+# Tests the Flask application container build and functionality
 
 set -e  # Exit on any error
 
-echo "🐳 Docker Container Test Suite"
-echo "=============================="
+echo "🐳 Flask Application Container Test Suite"
+echo "========================================="
 echo ""
 
 # Colors for output
@@ -47,7 +47,7 @@ cleanup() {
     docker compose down --remove-orphans 2>/dev/null || true
     $COMPOSE_CMD down --remove-orphans 2>/dev/null || true
     docker rm -f $CONTAINER_NAME 2>/dev/null || true
-    rm -f cookies.txt test-response.html api-response.json gallery-response.html 2>/dev/null || true
+    rm -f cookies.txt test-response.html api-response.json app-response.html 2>/dev/null || true
     echo -e "${GREEN}✅ Cleanup completed${NC}"
 }
 
