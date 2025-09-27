@@ -22,7 +22,7 @@ jobs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: ${{ secrets.DOCKER_USERNAME }}/docker-snap
+        images: ${{ secrets.DOCKER_USERNAME }}/flask-app-template
         tags: |
           type=ref,event=tag
           type=semver,pattern={{version}}
@@ -36,7 +36,7 @@ jobs:
         context: .
         file: ./Dockerfile
         load: true  # Load image locally for testing
-        tags: docker-snap:test
+        tags: flask-app-template:test
         cache-from: type=gha
         
     - name: Create test docker-compose file
@@ -44,17 +44,14 @@ jobs:
         cat > docker-compose.test.yml << 'EOF'
         version: '3.8'
         services:
-          docker-snap:
-            image: docker-snap:test
+          flask-app:
+            image: flask-app-template:test
             ports:
               - "5000:5000"
             environment:
-              - IMAGES_FOLDER=/images
-              - GALLERY_USERNAME=user
-              - GALLERY_PASSWORD=password
+              - APP_USERNAME=user
+              - APP_PASSWORD=password
               - SECRET_KEY=test-secret-key-for-ci
-            volumes:
-              - ./sample-images:/images:ro
             healthcheck:
               test: ["CMD", "python", "-c", "import requests; r=requests.get('http://localhost:5000/health', timeout=5); exit(0 if r.status_code == 200 else 1)"]
               interval: 10s
@@ -65,24 +62,6 @@ jobs:
         
     - name: Prepare test environment
       run: |
-        # Create sample images directory with test files
-        mkdir -p sample-images/test-folder
-        
-        # Create dummy test files to simulate media (use valid small files)
-        # Create a minimal 1x1 pixel PNG
-        echo -e '\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\x0cIDATx\x9cc```\x00\x01\x00\x00\x05\x00\x01\r\n-\xb4\x00\x00\x00\x00IEND\xaeB`\x82' > sample-images/test-image.png
-        
-        # Create minimal MP4 header for testing
-        echo -e 'Test video placeholder - not a real MP4' > sample-images/test-video.mp4
-        echo -e 'Test image in folder - not a real PNG' > sample-images/test-folder/nested-image.png
-        
-        # Create a simple text-based "image" that our gallery can handle
-        echo "Simple test content" > sample-images/readme.txt
-        
-        # List created files for debugging
-        echo "Created test files:"
-        find sample-images -type f -exec ls -la {} \;
-        
         # Make test script executable
         chmod +x test-docker/test-container.sh
         
@@ -100,9 +79,6 @@ jobs:
         echo "Available files:"
         ls -la
         echo ""
-        echo "Sample images:"
-        ls -la sample-images/ || true
-        echo ""
         
         # Run the test suite with the locally built image
         echo "Starting container tests..."
@@ -111,7 +87,7 @@ jobs:
         # Show final logs if tests complete
         echo ""
         echo "=== Final container logs ==="
-        docker compose -f $COMPOSE_FILE logs docker-snap --tail=20 || true
+        docker compose -f $COMPOSE_FILE logs flask-app --tail=20 || true
         
     - name: Login to Docker Hub
       if: success()  # Only login if tests passed
@@ -139,9 +115,9 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: ${{ secrets.DOCKER_USERNAME }}/docker-snap
-        short-description: "Docker Snap - Image and Video Gallery"
-        readme-filepath: ./README_DOCKER.md
+        repository: ${{ secrets.DOCKER_USERNAME }}/flask-app-template
+        short-description: "Flask Application Template with Docker Support"
+        readme-filepath: ./README.md
         
     - name: Test Results Summary
       if: always()  # Run whether tests passed or failed
