@@ -14,10 +14,14 @@ jobs:
       uses: actions/checkout@v4
       with:
         submodules: recursive  # Initialize pycopilot submodule
-        
+
+    - name: Extract version
+      id: version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
-      
+
     - name: Extract metadata
       id: meta
       uses: docker/metadata-action@v5
@@ -37,6 +41,7 @@ jobs:
         file: ./Dockerfile
         load: true  # Load image locally for testing
         tags: flask-app-template:test
+        build-args: APP_VERSION=${{ steps.version.outputs.VERSION }}
         cache-from: type=gha
         
     - name: Create test docker-compose file
@@ -106,6 +111,7 @@ jobs:
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         platforms: linux/amd64,linux/arm64
+        build-args: APP_VERSION=${{ steps.version.outputs.VERSION }}
         cache-from: type=gha
         cache-to: type=gha,mode=max
         

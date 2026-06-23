@@ -1,13 +1,21 @@
 from flask import Flask, render_template, jsonify, request, session, redirect, url_for
 import os
+import logging
 from functools import wraps
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 app = Flask(__name__)
+
+APP_VERSION = os.environ.get('APP_VERSION', 'dev')
 
 # Get authentication credentials from environment variables
 USERNAME = os.environ.get('APP_USERNAME', 'user')
 PASSWORD = os.environ.get('APP_PASSWORD', 'password')
 app.secret_key = os.environ.get('SECRET_KEY', 'your-secret-key-change-this-in-production')
+
+logger.info(f"Flask app v{APP_VERSION} initialized")
 
 def login_required(f):
     """Decorator to require authentication for routes"""
